@@ -36,7 +36,6 @@ release = "cargo release"
 signal-test = "node ./test/fixtures/signal-test.js"
 ci = { depends = ["format", "build", "test"] }
 pre-commit = { depends = ["render", "lint"] }
-'test:e2e' = "just test-e2e"
 
 [tasks.build]
 alias = "b"
@@ -84,6 +83,7 @@ description = "Update test snapshots"
 run = "cargo insta test --accept --unreferenced delete"
 
 [tasks.test]
+description = "run all tests"
 alias = 't'
 run = [
   "mise run test:unit",
@@ -91,20 +91,9 @@ run = [
 ]
 
 [tasks."test:unit"]
-run = "cargo test"
-env = { CARGO_TERM_COLOR = "always" }
-
-# TODO: make this work when we have task args
-#run = '''
-#set -euo pipefail
-#TEST="$1"
-#if [ "TEST" = all ]; then
-#    echo ./e2e/run_all_tests
-#else
-#    FILES="$(fd TEST e2e/)"
-#    echo ./e2e/run_test "$FILES"
-#fi
-#'''
+description = "run unit tests"
+run = "cargo test --all-features"
+env = { CARGO_TERM_COLOR = "always", "RUST_TEST_THREADS" = "1" }
 
 [tasks."docker:image"]
 description = "build docker image from Dockerfile"
