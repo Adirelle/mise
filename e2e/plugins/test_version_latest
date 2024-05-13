@@ -1,0 +1,19 @@
+# shellcheck shell=bash
+
+# Ensure no versions of dummy are installed
+assert "mise ls dummy" ""
+
+# @latest with a fresh install should install and use the latest version (2.0.0 for dummy)
+assert_contains "mise x dummy@latest -- dummy" "2.0.0"
+assert_contains "mise ls dummy" "2.0.0"
+
+# Remove all installed versions of dummy
+mise rm -a dummy
+assert_not_contains "mise ls dummy" "2.0.0"
+
+# Forcefully install and use an old version
+assert_contains "mise x dummy@1.0.0 -- dummy" "1.0.0"
+assert_contains "mise ls dummy" "1.0.0"
+
+# Install and use the latest version, this should be 2.0.0
+assert_contains "mise x dummy@latest -- dummy" "2.0.0"
